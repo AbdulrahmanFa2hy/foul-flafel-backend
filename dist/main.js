@@ -51,21 +51,35 @@ i18n_1.default.configure({
     queryParameter: 'lang',
 });
 app.use(i18n_1.default.init);
-(0, database_1.default)();
 (0, src_1.default)(app);
 app.get('/', function (req, res) {
     res.send('Hello World !!');
 });
-server = app.listen(process.env.PORT, () => {
-    console.log(`Server running on port ${process.env.PORT} `);
-});
+const startServer = async () => {
+    try {
+        await (0, database_1.default)();
+        server = app.listen(process.env.PORT, () => {
+            console.log(`Server running on port ${process.env.PORT} `);
+        });
+    }
+    catch (error) {
+        console.error('Unable to connect to MongoDB', error);
+        process.exit(1);
+    }
+};
+startServer();
 process.on('unhandledRejection', (err) => {
     if (process.env.NODE_ENV === 'development') {
         console.log(err);
     }
     console.log(`unhandledRejection ${err.name} | ${err.message}`);
-    server.close(() => {
-        console.log('shutting down the server ');
+    if (server) {
+        server.close(() => {
+            console.log('shutting down the server ');
+            process.exit(1);
+        });
+    }
+    else {
         process.exit(1);
-    });
+    }
 });

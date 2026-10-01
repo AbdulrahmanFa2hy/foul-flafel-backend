@@ -1,15 +1,17 @@
 import mongoose from "mongoose";
 
-const dbConnection: () => void = () : void  =>{
+const dbConnection = async (): Promise<void> => {
+    const mongoUri = process.env.MONGODB_URI?.trim() || process.env.DB?.trim();
 
-     mongoose.connect(process.env.DB!)
-    .then(() : void => {
-        console.log("DB connected successfully")
-    })
-    .catch((err : any) : void=> {
+    if (!mongoUri) {
+        throw new Error("MongoDB connection string is missing. Set MONGODB_URI.");
+    }
 
-        console.log("Error connecting to DB", err)
-    } )
-}
+    await mongoose.connect(mongoUri, {
+        serverSelectionTimeoutMS: 10_000,
+    });
+
+    console.log("DB connected successfully");
+};
 
 export default dbConnection;

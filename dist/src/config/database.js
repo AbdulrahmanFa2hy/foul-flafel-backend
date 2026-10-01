@@ -4,13 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const dbConnection = () => {
-    mongoose_1.default.connect(process.env.DB)
-        .then(() => {
-        console.log("DB connected successfully");
-    })
-        .catch((err) => {
-        console.log("Error connecting to DB", err);
+const dbConnection = async () => {
+    const mongoUri = process.env.MONGODB_URI?.trim() || process.env.DB?.trim();
+    if (!mongoUri) {
+        throw new Error("MongoDB connection string is missing. Set MONGODB_URI.");
+    }
+    await mongoose_1.default.connect(mongoUri, {
+        serverSelectionTimeoutMS: 10000,
     });
+    console.log("DB connected successfully");
 };
 exports.default = dbConnection;

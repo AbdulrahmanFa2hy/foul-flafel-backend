@@ -59,26 +59,37 @@ i18n.configure({
 
 app.use(i18n.init);
 
-dbConnection();
 Routes(app);
 
 app.get('/', function (req : express.Request, res: express.Response) : void {
   res.send('Hello World !!')
 })
 
-server = app.listen(process.env.PORT, ()  => {
-  console.log(`Server running on port ${process.env.PORT} `);
-})
+const startServer = async (): Promise<void> => {
+  try {
+    await dbConnection();
+    server = app.listen(process.env.PORT, ()  => {
+      console.log(`Server running on port ${process.env.PORT} `);
+    });
+  } catch (error) {
+    console.error('Unable to connect to MongoDB', error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 process.on('unhandledRejection', (err : Error)  => {
   if (process.env.NODE_ENV === 'development') { 
     console.log(err);
   }
   console.log  (`unhandledRejection ${err.name} | ${err.message}`);
-  server.close(()  => {
-      
+  if (server) {
+    server.close(()  => {
       console.log('shutting down the server ');
       process.exit(1);
-  
-  })
+    });
+  } else {
+    process.exit(1);
+  }
 })
