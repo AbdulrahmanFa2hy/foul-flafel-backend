@@ -31,7 +31,7 @@ class AuthService {
                 image: req.body.image,
                 role: req.body.role,
             });
-            const token = jsonwebtoken_1.default.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET);
+            const token = jsonwebtoken_1.default.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET);
             res.status(201).json({
                 message: "User created successfully",
                 token,

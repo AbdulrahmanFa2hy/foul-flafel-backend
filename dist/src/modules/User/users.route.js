@@ -9,6 +9,7 @@ const user_validation_1 = __importDefault(require("./user.validation"));
 const auth_middleware_1 = require("../../middleware/auth.middleware");
 const users_interface_1 = require("./users.interface");
 const userRouter = (0, express_1.Router)();
+userRouter.use((0, auth_middleware_1.isAuthenticated)([users_interface_1.UserRoles.MANAGER, users_interface_1.UserRoles.ADMIN], false));
 // userRouter.use(authService.protectedRoutes, authService.checkActive, authService.allowedTo('admin'))
 userRouter.get('/', users_service_1.default.getAllUsers);
 userRouter.post('/', users_service_1.default.uploadImage, users_service_1.default.saveImage, user_validation_1.default.createOne, users_service_1.default.createUser);

@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon main.ts",
-    "start": "set NODE_ENV=production && node ./dist/main.js",
+    "start": "node ./dist/main.js",
     "build": "tsc"
   },
   "keywords": [],

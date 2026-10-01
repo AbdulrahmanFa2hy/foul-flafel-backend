@@ -5,6 +5,7 @@ import { isAuthenticated } from "../../middleware/auth.middleware";
 import { UserRoles } from "./users.interface";
 
 const userRouter : Router =  Router();
+userRouter.use(isAuthenticated([UserRoles.MANAGER, UserRoles.ADMIN], false));
 
 // userRouter.use(authService.protectedRoutes, authService.checkActive, authService.allowedTo('admin'))
 
