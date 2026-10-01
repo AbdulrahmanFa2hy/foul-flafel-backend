@@ -26,15 +26,14 @@ class UsersService {
 
   updateUser = expressAsyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-      const user: Users | null = await usersSchema.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: req.body,
-        },
-        { new: true }
-      );
+      const user = await usersSchema.findById(req.params.id);
 
       if (!user) return next(new ApiError(`${req.__("not_found")}`, 404));
+      for (const field of ['name', 'username', 'password', 'role', 'active', 'hasPassword', 'image']) {
+        if (req.body[field] !== undefined) user.set(field, req.body[field]);
+      }
+      if (user.isModified('password')) user.passwordChangedAt = new Date();
+      await user.save();
       res.status(200).json({
         message: "User updated successfully",
         data: sanitization.User(user),

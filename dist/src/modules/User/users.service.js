@@ -32,11 +32,16 @@ class UsersService {
         }));
         this.getUserById = refactor_service_1.default.getOneById(users_schema_1.default);
         this.updateUser = (0, express_async_handler_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const user = yield users_schema_1.default.findByIdAndUpdate(req.params.id, {
-                $set: req.body,
-            }, { new: true });
+            const user = yield users_schema_1.default.findById(req.params.id);
             if (!user)
                 return next(new apiErrors_1.default(`${req.__("not_found")}`, 404));
+            for (const field of ['name', 'username', 'password', 'role', 'active', 'hasPassword', 'image']) {
+                if (req.body[field] !== undefined)
+                    user.set(field, req.body[field]);
+            }
+            if (user.isModified('password'))
+                user.passwordChangedAt = new Date();
+            yield user.save();
             res.status(200).json({
                 message: "User updated successfully",
                 data: sanitization_1.default.User(user),

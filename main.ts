@@ -1,6 +1,7 @@
 import { Server } from 'http';
 import express from 'express'
 import path from 'path';
+import { existsSync } from 'fs';
 import dbConnection from './src/config/database';
 import dotenv from 'dotenv';
 import Routes from './src';
@@ -52,7 +53,9 @@ app.use(hpp({
 
 i18n.configure({
   locales: ['en', 'ar'],
-  directory: path.join(__dirname, 'locales'),
+  directory: existsSync(path.join(__dirname, 'locales'))
+    ? path.join(__dirname, 'locales')
+    : path.join(__dirname, '..', 'locales'),
   defaultLocale: 'en',
   queryParameter: 'lang',
 })

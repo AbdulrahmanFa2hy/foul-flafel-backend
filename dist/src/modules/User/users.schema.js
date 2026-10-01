@@ -40,7 +40,17 @@ const usersSchema = new mongoose_1.default.Schema({
         url: { type: String, default: "user-default.png" },
         publicId: { type: String, default: "" },
     },
-}, { timestamps: true });
+}, {
+    timestamps: true,
+    toJSON: {
+        transform(_doc, result) {
+            for (const field of ['password', 'passwordResetCode', 'passwordResetCodeExpires', 'passwordResetCodeVerified']) {
+                delete result[field];
+            }
+            return result;
+        },
+    },
+});
 // Format image URL
 const imagesUrl = (document) => {
     if (document.image &&

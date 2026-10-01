@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
+const fs_1 = require("fs");
 const database_1 = __importDefault(require("./src/config/database"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const src_1 = __importDefault(require("./src"));
@@ -54,7 +55,9 @@ app.use((0, hpp_1.default)({
 }));
 i18n_1.default.configure({
     locales: ['en', 'ar'],
-    directory: path_1.default.join(__dirname, 'locales'),
+    directory: (0, fs_1.existsSync)(path_1.default.join(__dirname, 'locales'))
+        ? path_1.default.join(__dirname, 'locales')
+        : path_1.default.join(__dirname, '..', 'locales'),
     defaultLocale: 'en',
     queryParameter: 'lang',
 });

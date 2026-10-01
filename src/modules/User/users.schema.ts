@@ -31,7 +31,17 @@ const usersSchema = new mongoose.Schema<Users>(
       publicId: { type: String, default: "" },
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      transform(_doc, result) {
+        for (const field of ['password', 'passwordResetCode', 'passwordResetCodeExpires', 'passwordResetCodeVerified']) {
+          delete (result as Record<string, unknown>)[field];
+        }
+        return result;
+      },
+    },
+  }
 );
 
 // Format image URL
